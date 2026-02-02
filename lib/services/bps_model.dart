@@ -3,28 +3,26 @@ class BpsIndicator {
   final String title;
   final String value;
   final String unit;
-  // Field tambahan untuk UI (tidak dari API)
-  final String change; 
-  final bool isPositive;
+  final String period; // Kita ganti 'change' dengan 'period' (Tahun/Bulan) karena API menyediakan periode
+  final String dataSource;
 
   BpsIndicator({
-    this.id = 0,
+    required this.id,
     required this.title,
     required this.value,
     required this.unit,
-    this.change = "-",
-    this.isPositive = true,
+    required this.period,
+    required this.dataSource,
   });
 
   factory BpsIndicator.fromJson(Map<String, dynamic> json) {
     return BpsIndicator(
       id: int.tryParse(json['indicator_id'].toString()) ?? 0,
-      title: json['title']?.toString() ?? 'Indikator',
-      value: json['value']?.toString() ?? '-',
-      unit: json['unit']?.toString() ?? '',
-      // Default value karena API BPS tidak menyediakan data "kenaikan/penurunan"
-      change: "-", 
-      isPositive: true,
+      title: json['title'] ?? "",
+      value: json['value']?.toString() ?? "-",
+      unit: json['unit'] ?? "",
+      period: json['period'] ?? "", // Contoh: "2024", "Agustus 2024"
+      dataSource: json['data_source'] ?? "",
     );
   }
 }
