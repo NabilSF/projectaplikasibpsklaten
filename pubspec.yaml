@@ -30,10 +30,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  intl: ^0.19.0
   http: ^1.1.0          # Untuk akses API
   sqflite: ^2.3.0       # Untuk Database Lokal (SQLite)
   path_provider: ^2.1.1 # Helper path database
-  intl: ^0.18.1         # Untuk format tanggal
   google_fonts: ^6.1.0  # Agar font mirip desain BPS
   url_launcher: ^6.2.1 # <--- Tambahkan ini
   flutter_widget_from_html: ^0.15.3

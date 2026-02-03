@@ -7,13 +7,12 @@ import 'pages/home_page.dart';
 import 'pages/tabel_page.dart';
 import 'pages/pencarian_page.dart';
 import 'pages/publikasi_page.dart';
-import 'pages/berita_page.dart';
-import 'pages/data_ekspor_impor_page.dart';
-import 'pages/brs_page.dart';
+// Note: Page Berita, BRS, DataEksporImpor tetap diimport
 
 // --- IMPORT HALAMAN BARU ---
 import 'pages/about_app_page.dart';
 import 'pages/faq_page.dart';
+import 'pages/rencana_terbit_page.dart'; 
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -26,10 +25,8 @@ void main() {
 final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.light);
 final ValueNotifier<int> selectedIndexNotifier = ValueNotifier(0);
 
-// Global key untuk akses MainScreen dari halaman lain
 final GlobalKey<_MainScreenState> mainScreenKey = GlobalKey<_MainScreenState>();
 
-// Helper functions untuk navigasi persistent footer
 void navigateToDetailPage(Widget detailPage) {
   mainScreenKey.currentState?.showDetailPage(detailPage);
 }
@@ -42,15 +39,14 @@ void closeAllDetailPages() {
   mainScreenKey.currentState?.closeAllDetailPages();
 }
 
-// Fungsi untuk memunculkan modal Lainnya
+// UPDATE: Tinggi modal disesuaikan agar tampilan card lebih leluasa
 void showLainnyaModal(BuildContext context) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
     builder: (context) => Container(
-      // Tinggi modal menyesuaikan konten tapi maksimal 75% layar agar proporsional
-      height: MediaQuery.of(context).size.height * 0.75, 
+      height: MediaQuery.of(context).size.height * 0.7, // 70% Layar
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
@@ -65,10 +61,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const Color bpsPrimary = Color(0xFF4A8BDF); // Dark blue
-    const Color bpsSecondary = Color(0xFFA0006D); // Eggplant
+    const Color bpsPrimary = Color(0xFF4A8BDF); 
+    const Color bpsSecondary = Color(0xFFA0006D); 
 
-    // Helper untuk style input text
     InputDecorationTheme modernInputTheme(bool isDark) {
       return InputDecorationTheme(
         filled: true,
@@ -90,8 +85,6 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'KLASTAT',
-
-          // --- LIGHT THEME ---
           theme: ThemeData(
             useMaterial3: true,
             brightness: Brightness.light,
@@ -110,8 +103,6 @@ class MyApp extends StatelessWidget {
             inputDecorationTheme: modernInputTheme(false),
             textTheme: GoogleFonts.plusJakartaSansTextTheme(),
           ),
-
-          // --- DARK THEME ---
           darkTheme: ThemeData(
             useMaterial3: true,
             brightness: Brightness.dark,
@@ -131,7 +122,6 @@ class MyApp extends StatelessWidget {
             inputDecorationTheme: modernInputTheme(true),
             textTheme: GoogleFonts.plusJakartaSansTextTheme(ThemeData.dark().textTheme),
           ),
-
           themeMode: mode,
           home: MainScreen(key: mainScreenKey),
         );
@@ -148,7 +138,6 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  // List halaman utama (4 menu di navigasi bawah)
   final List<Widget> _pages = [
     const HomePage(),
     const TabelPage(),
@@ -156,7 +145,6 @@ class _MainScreenState extends State<MainScreen> {
     const PublikasiPage(),
   ];
 
-  // Stack untuk detail pages yang persistent dengan footer
   final List<Widget> _detailPages = <Widget>[];
 
   @override
@@ -166,15 +154,12 @@ class _MainScreenState extends State<MainScreen> {
       builder: (context, selectedIndex, child) {
         return Scaffold(
           extendBody: true,
-          // Stack untuk menampilkan halaman utama + detail pages
           body: Stack(
             children: [
-              // Halaman utama (selalu di background)
               IndexedStack(
                 index: selectedIndex < 4 ? selectedIndex : 0,
                 children: _pages,
               ),
-              // Detail pages (jika ada) - akan menutupi halaman utama
               ..._detailPages,
             ],
           ),
@@ -196,10 +181,8 @@ class _MainScreenState extends State<MainScreen> {
               selectedIndex: selectedIndex < 4 ? selectedIndex : 0,
               onDestinationSelected: (index) {
                 if (index == 4) {
-                  // MUNCULKAN MODAL SHEET
                   showLainnyaModal(context);
                 } else {
-                  // Pindah halaman biasa
                   if (_detailPages.isNotEmpty) {
                     setState(() {
                       _detailPages.clear();
@@ -252,7 +235,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 }
 
-// --- KONTEN MODAL LAINNYA ---
+// --- KONTEN MODAL LAINNYA (REDESIGNED) ---
 
 class LainnyaModalContent extends StatelessWidget {
   const LainnyaModalContent({super.key});
@@ -274,27 +257,37 @@ class LainnyaModalContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const Color brandGreen = Color(0xFF2AA090); 
-
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Column(
       children: [
-        // Handle bar & Header (Fixed di atas)
+        // Handle bar & Header yang lebih bersih
         Padding(
-          padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+          padding: const EdgeInsets.fromLTRB(20, 15, 20, 10),
           child: Column(
             children: [
               Container(
-                width: 40, height: 4,
+                width: 50, height: 5,
                 margin: const EdgeInsets.only(bottom: 20),
-                decoration: BoxDecoration(color: Colors.grey[400], borderRadius: BorderRadius.circular(2)),
+                decoration: BoxDecoration(color: Colors.grey.withOpacity(0.3), borderRadius: BorderRadius.circular(10)),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text("Lainnya", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close)
+                  const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Menu Lainnya", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                      SizedBox(height: 4),
+                      Text("Pintas layanan dan informasi", style: TextStyle(fontSize: 12, color: Colors.grey)),
+                    ],
+                  ),
+                  CircleAvatar(
+                    backgroundColor: Colors.grey.withOpacity(0.1),
+                    child: IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.close_rounded, color: Colors.grey),
+                    ),
                   ),
                 ],
               ),
@@ -302,140 +295,91 @@ class LainnyaModalContent extends StatelessWidget {
           ),
         ),
         
-        const Divider(),
+        const SizedBox(height: 10),
 
-        // Konten Scrollable
+        // Konten Scrollable dengan Card Modern
         Expanded(
           child: ListView(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             children: [
-              // Row Notifikasi & Bookmark (Placeholder)
+              
+              // --- SECTION 1: JADWAL & DATA ---
+              _buildSectionHeader("Informasi Statistik"),
+              _buildModernCard(
+                context,
+                title: "Rencana Terbit",
+                subtitle: "Jadwal rilis data BPS terbaru",
+                icon: Icons.calendar_month_rounded,
+                color: Colors.purple,
+                onTap: () {
+                  Navigator.pop(context);
+                  navigateToDetailPage(const RencanaTerbitPage()); 
+                }
+              ),
+
+              const SizedBox(height: 24),
+
+              // --- SECTION 2: PELAYANAN ---
+              _buildSectionHeader("Layanan Pengaduan"),
               Row(
                 children: [
-                  Expanded(child: _buildBigButton(context, Icons.notifications_none, "Notifikasi", "1 Pesan", Colors.orange)),
+                  Expanded(
+                    child: _buildSmallCard(
+                      context,
+                      title: "Lapor!",
+                      icon: Icons.campaign_rounded,
+                      color: Colors.redAccent,
+                      onTap: () async {
+                        Navigator.pop(context);
+                        _launchExternalUrl(context, 'https://www.lapor.go.id/');
+                      }
+                    ),
+                  ),
                   const SizedBox(width: 12),
-                  Expanded(child: _buildBigButton(context, Icons.bookmark_border, "Bookmark", "0 Konten", Colors.blue)),
+                  Expanded(
+                    child: _buildSmallCard(
+                      context,
+                      title: "WhatsApp",
+                      icon: Icons.chat_bubble_rounded,
+                      color: Colors.green,
+                      onTap: () async {
+                        Navigator.pop(context);
+                        _launchExternalUrl(context, 'https://wa.me/628977703310');
+                      }
+                    ),
+                  ),
                 ],
               ),
-              const SizedBox(height: 20),
 
-              // --- DAFTAR MENU ---
+              const SizedBox(height: 24),
 
-              _buildMenuTile(
+              // --- SECTION 3: BANTUAN ---
+              _buildSectionHeader("Tentang & Bantuan"),
+              _buildModernCard(
                 context,
-                Icons.insert_chart_outlined,
-                "Berita BPS Kabupaten Klaten",
-                Colors.orange,
-                () {
-                  Navigator.pop(context);
-                  navigateToDetailPage(const BeritaPage());
-                }
-              ),
-
-              _buildMenuTile(
-                context,
-                Icons.calendar_month_outlined,
-                "Rencana Terbit",
-                Colors.purple,
-                () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                        title: const Column(
-                          children: [
-                            Icon(Icons.info_outline_rounded, size: 50, color: Colors.purple),
-                            SizedBox(height: 10),
-                            Text("Informasi", style: TextStyle(fontWeight: FontWeight.bold)),
-                          ],
-                        ),
-                        content: const Text("Mohon maaf, fitur ini belum tersedia untuk saat ini.", textAlign: TextAlign.center),
-                        actions: [
-                          Center(
-                            child: TextButton(
-                              onPressed: () => Navigator.of(context).pop(),
-                              child: const Text("Tutup", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.purple)),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                }
-              ),
-
-              _buildMenuTile(
-                context,
-                Icons.language_outlined,
-                "Data Ekspor Impor",
-                Colors.blueAccent,
-                () {
-                  Navigator.pop(context);
-                  navigateToDetailPage(const DataEksporImporPage());
-                }
-              ),
-
-              _buildMenuTile(
-                context,
-                Icons.article_outlined,
-                "Berita Resmi Statistik",
-                Colors.indigo,
-                () {
-                  Navigator.pop(context);
-                  navigateToDetailPage(const BrsPage());
-                }
-              ),
-
-              // --- MENU LAYANAN PENGADUAN (LAPOR!) ---
-              _buildMenuTile(
-                context,
-                Icons.campaign_outlined, 
-                "Layanan Pengaduan (Lapor!)",
-                Colors.redAccent,
-                () async {
-                  Navigator.pop(context);
-                  _launchExternalUrl(context, 'https://www.lapor.go.id/');
-                }
-              ),
-
-              // --- MENU WHATSAPP ---
-              _buildMenuTile(
-                context,
-                Icons.chat_outlined,
-                "WhatsApp Pelayanan",
-                Colors.green,
-                () async {
-                  Navigator.pop(context);
-                  _launchExternalUrl(context, 'https://wa.me/628977703310');
-                }
-              ),
-
-              // --- MENU FAQ (BARU) ---
-              _buildMenuTile(
-                context,
-                Icons.help_outline_rounded,
-                "FAQ",
-                Colors.teal, // Warna Teal untuk Bantuan
-                () { 
+                title: "FAQ",
+                subtitle: "Pertanyaan yang sering diajukan",
+                icon: Icons.help_outline_rounded,
+                color: Colors.teal,
+                onTap: () { 
                   Navigator.pop(context); 
-                  navigateToDetailPage(const FaqPage()); // Navigasi ke Halaman FAQ
+                  navigateToDetailPage(const FaqPage());
                 }
               ),
-
-              // --- MENU TENTANG APLIKASI (DULU TENTANG KAMI) ---
-              _buildMenuTile(
+              const SizedBox(height: 12),
+              _buildModernCard(
                 context,
-                Icons.info_outline,
-                "Tentang Aplikasi",
-                Colors.grey[700]!, // Warna Abu tua
-                () { 
+                title: "Tentang Aplikasi",
+                subtitle: "Versi 1.0.0",
+                icon: Icons.info_outline_rounded,
+                color: isDark ? Colors.grey : Colors.blueGrey,
+                onTap: () { 
                   Navigator.pop(context); 
-                  navigateToDetailPage(const AboutAppPage()); // Navigasi ke Halaman Tentang Aplikasi
+                  navigateToDetailPage(const AboutAppPage());
                 }
               ),
 
-              const SizedBox(height: 30), 
+              const SizedBox(height: 40), 
             ],
           ),
         ),
@@ -443,39 +387,129 @@ class LainnyaModalContent extends StatelessWidget {
     );
   }
 
-  Widget _buildBigButton(BuildContext context, IconData icon, String title, String sub, Color color) {
-    return Container(
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.withOpacity(0.1)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, color: color, size: 28),
-          const SizedBox(height: 8),
-          Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-          Text(sub, style: const TextStyle(fontSize: 11, color: Colors.grey)),
-        ],
+  // --- WIDGET HELPERS ---
+
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12, left: 4),
+      child: Text(
+        title.toUpperCase(),
+        style: const TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.bold,
+          color: Colors.grey,
+          letterSpacing: 1.2
+        ),
       ),
     );
   }
 
-  Widget _buildMenuTile(BuildContext context, IconData icon, String title, Color color, VoidCallback onTap) {
-    return ListTile(
-      leading: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(8),
+  // Card Besar Memanjang
+  Widget _buildModernCard(BuildContext context, {
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Theme.of(context).cardColor,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.grey.withOpacity(0.1)),
+            boxShadow: [
+              BoxShadow(
+                color: color.withOpacity(0.08), // Shadow berwarna sesuai icon
+                blurRadius: 15,
+                offset: const Offset(0, 5),
+              )
+            ]
+          ),
+          child: Row(
+            children: [
+              // Icon Box
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Icon(icon, color: color, size: 24),
+              ),
+              const SizedBox(width: 16),
+              
+              // Text Info
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 2),
+                    Text(subtitle, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+                  ],
+                ),
+              ),
+
+              // Arrow
+              Icon(Icons.chevron_right_rounded, color: Colors.grey[400]),
+            ],
+          ),
         ),
-        child: Icon(icon, color: color, size: 22),
       ),
-      title: Text(title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
-      trailing: const Icon(Icons.chevron_right, size: 20, color: Colors.grey),
-      onTap: onTap, 
+    );
+  }
+
+  // Card Kecil (Kotak)
+  Widget _buildSmallCard(BuildContext context, {
+    required String title,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+          decoration: BoxDecoration(
+            color: Theme.of(context).cardColor,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.grey.withOpacity(0.1)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.03),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              )
+            ]
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, color: color, size: 26),
+              ),
+              const SizedBox(height: 12),
+              Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

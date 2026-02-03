@@ -340,32 +340,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                       ),
                       const SizedBox(height: 20),
 
-                      // --- BERITA BPS ---
-                      if (_latestNews.isNotEmpty)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text("Berita BPS Klaten", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                  TextButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const BeritaPage())), child: const Text("Lihat Semua", style: TextStyle(fontWeight: FontWeight.bold))),
-                                ],
-                              ),
-                              ListView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: _latestNews.length,
-                                padding: EdgeInsets.zero,
-                                itemBuilder: (context, index) => _buildNewsItem(context, _latestNews[index]),
-                              ),
-                            ],
-                          ),
-                        ),
-                      const SizedBox(height: 20),
-
-                      // --- PRESS RELEASE ---
+                      // --- PRESS RELEASE (BRS) - DIPINDAH KE ATAS BERITA ---
                       if (_latestPressReleases.isNotEmpty)
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -393,6 +368,33 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                             ],
                           ),
                         ),
+                      const SizedBox(height: 20),
+
+                      // --- BERITA (TANPA BPS KLATEN) - DIPINDAH KE BAWAH ---
+                      if (_latestNews.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  // JUDUL DIGANTI JADI 'Berita'
+                                  const Text("Berita", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                  TextButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const BeritaPage())), child: const Text("Lihat Semua", style: TextStyle(fontWeight: FontWeight.bold))),
+                                ],
+                              ),
+                              ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: _latestNews.length,
+                                padding: EdgeInsets.zero,
+                                itemBuilder: (context, index) => _buildNewsItem(context, _latestNews[index]),
+                              ),
+                            ],
+                          ),
+                        ),
+                        
                       const SizedBox(height: 80), 
                     ],
                   ),
@@ -407,10 +409,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
   // --- WIDGET BUILDERS ---
 
-  // WIDGET SKD: Warna Fixed agar tetap Biru di Dark Mode
   Widget _buildSkdBanner(BuildContext context) {
-    // Definisi Warna Tetap (Fixed Colors)
-    const Color fixedBlue = Color(0xFF4A8BDF); // Warna Utama
+    const Color fixedBlue = Color(0xFF4A8BDF); 
     const Color fixedGradient = Color(0xFF2193b0); 
 
     return Container(
@@ -433,7 +433,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       ),
       child: Stack(
         children: [
-          // Dekorasi Lingkaran Background
           Positioned(
             right: -20,
             top: -20,
@@ -476,7 +475,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
-                          foregroundColor: fixedBlue, // Teks tombol juga pakai warna fixed
+                          foregroundColor: fixedBlue, 
                           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                           elevation: 0,
@@ -487,7 +486,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                   ),
                 ),
                 const SizedBox(width: 10),
-                // Icon Illustrasi di Kanan
                 const Icon(Icons.assignment_turned_in_rounded, size: 80, color: Colors.white),
               ],
             ),
@@ -500,87 +498,34 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   Widget _buildDashboardCard(BuildContext context, BpsIndicator data) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-
-    // Logika Ikon Berdasarkan Judul
     IconData iconData = Icons.analytics_outlined;
     Color iconColor = Colors.blue;
-    String titleLower = data.title.toLowerCase();
-
-    if (titleLower.contains("miskin")) { 
-      iconData = Icons.monetization_on_outlined; 
-      iconColor = Colors.red; 
-    } else if (titleLower.contains("manusia") || titleLower.contains("ipm")) { 
-      iconData = Icons.people_outline; 
-      iconColor = Colors.orange; 
-    } else if (titleLower.contains("pengangguran")) { 
-      iconData = Icons.work_outline; 
-      iconColor = Colors.purple; 
-    } else if (titleLower.contains("ekonomi") || titleLower.contains("pdrb")) { 
-      iconData = Icons.trending_up; 
-      iconColor = Colors.green; 
-    }
+    if (data.title.toLowerCase().contains("miskin")) { iconData = Icons.monetization_on_outlined; iconColor = Colors.red; }
+    else if (data.title.toLowerCase().contains("manusia") || data.title.toLowerCase().contains("ipm")) { iconData = Icons.people_outline; iconColor = Colors.orange; }
+    else if (data.title.toLowerCase().contains("pengangguran")) { iconData = Icons.work_outline; iconColor = Colors.purple; }
+    else if (data.title.toLowerCase().contains("ekonomi")) { iconData = Icons.trending_up; iconColor = Colors.green; }
 
     return Container(
-      width: 160,
-      margin: const EdgeInsets.only(right: 12, bottom: 8),
-      padding: const EdgeInsets.all(16),
+      width: 160, margin: const EdgeInsets.only(right: 12, bottom: 8), padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: theme.cardColor,
-        borderRadius: BorderRadius.circular(16),
+        color: theme.cardColor, borderRadius: BorderRadius.circular(16),
         border: Border.all(color: theme.dividerColor.withOpacity(0.5)),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(0, 4))
-        ],
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(0, 4))],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(iconData, color: iconColor, size: 28),
-              // PERBAIKAN: Menampilkan Periode Data (Tahun) yang Real
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: theme.scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(
-                  data.period, // Data Tahun Real dari API
-                  style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
-                ),
-              )
-            ],
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Value + Unit
-              Text(
-                "${data.value} ${data.unit}",
-                style: TextStyle(
-                  fontSize: 18, // Font sedikit disesuaikan
-                  fontWeight: FontWeight.w900,
-                  color: isDark ? Colors.white : const Color(0xFF111439)
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 4),
-              // Judul Indikator
-              Text(
-                data.title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 11, color: theme.textTheme.bodySmall?.color),
-              ),
-            ],
-          )
-        ],
-      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Icon(iconData, color: iconColor, size: 28),
+          Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: theme.scaffoldBackgroundColor, borderRadius: BorderRadius.circular(4)), child: Text(data.period, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)))
+        ]),
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text("${data.value} ${data.unit}", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: isDark ? Colors.white : const Color(0xFF111439)), overflow: TextOverflow.ellipsis),
+          const SizedBox(height: 4),
+          Text(data.title, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 11, color: theme.textTheme.bodySmall?.color)),
+        ])
+      ]),
     );
   }
+
   Widget _buildCompactMenuBtn(BuildContext context, IconData icon, String label, Color color, VoidCallback onTap) {
     return Column(mainAxisSize: MainAxisSize.min, children: [
       Material(color: Colors.transparent, child: InkWell(onTap: onTap, borderRadius: BorderRadius.circular(16), child: Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: color.withOpacity(0.15), shape: BoxShape.circle), child: Icon(icon, color: color, size: 22)))),
@@ -609,9 +554,55 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     return Container(margin: const EdgeInsets.only(bottom: 12), decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(12), border: Border.all(color: theme.dividerColor.withOpacity(0.5))), child: ListTile(contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4), title: Text(item.title, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)), subtitle: Padding(padding: const EdgeInsets.only(top: 6), child: Text(item.rlDate, style: TextStyle(fontSize: 11, color: theme.textTheme.bodySmall?.color))), trailing: Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Colors.grey[400]), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => BeritaDetailPage(newsId: item.newsId)))));
   }
 
+  // BUILDER BRS dengan GAMBAR COVER DARI API
   Widget _buildPressReleaseItem(BuildContext context, BpsPressRelease item) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    return Container(margin: const EdgeInsets.only(bottom: 12), decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withOpacity(isDark ? 0.2 : 0.04), blurRadius: 10, offset: const Offset(0, 4))]), child: Material(color: Colors.transparent, child: InkWell(borderRadius: BorderRadius.circular(16), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => BrsDetailPage(brsId: item.brsId))), child: Padding(padding: const EdgeInsets.all(12), child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [Container(width: 80, height: 100, decoration: BoxDecoration(color: Colors.grey[200], borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.grey.withOpacity(0.1))), child: item.cover.isNotEmpty ? ClipRRect(borderRadius: BorderRadius.circular(8), child: Image.network(_constructImageUrl(item.cover), fit: BoxFit.cover, errorBuilder: (ctx, err, stack) => Icon(Icons.bar_chart, color: theme.primaryColor, size: 30))) : Icon(Icons.bar_chart, color: theme.primaryColor, size: 30)), const SizedBox(width: 16), Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(item.rlDate, style: TextStyle(fontSize: 12, color: Colors.grey[600], fontWeight: FontWeight.w500)), const SizedBox(height: 6), Text(_cleanHtmlContent(item.title), maxLines: 3, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, height: 1.3))]))])))));
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withOpacity(isDark ? 0.2 : 0.04), blurRadius: 10, offset: const Offset(0, 4))]),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => BrsDetailPage(brsId: item.brsId))),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // COVER BRS (Sudah menggunakan _constructImageUrl)
+                Container(
+                  width: 80, 
+                  height: 100, 
+                  decoration: BoxDecoration(color: Colors.grey[200], borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.grey.withOpacity(0.1))), 
+                  child: item.cover.isNotEmpty 
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(8), 
+                        child: Image.network(
+                          _constructImageUrl(item.cover), 
+                          fit: BoxFit.cover, 
+                          errorBuilder: (ctx, err, stack) => Icon(Icons.bar_chart, color: theme.primaryColor, size: 30)
+                        )
+                      ) 
+                    : Icon(Icons.bar_chart, color: theme.primaryColor, size: 30)
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(item.rlDate, style: TextStyle(fontSize: 12, color: Colors.grey[600], fontWeight: FontWeight.w500)), 
+                      const SizedBox(height: 6), 
+                      Text(_cleanHtmlContent(item.title), maxLines: 3, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, height: 1.3))
+                    ]
+                  )
+                )
+              ]
+            )
+          )
+        )
+      )
+    );
   }
 }
