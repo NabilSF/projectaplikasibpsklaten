@@ -339,7 +339,7 @@ class LainnyaModalContent extends StatelessWidget {
                   Expanded(
                     child: _buildSmallCard(
                       context,
-                      title: "WhatsApp",
+                      title: "KLASIK (Layanan Whatsapp)",
                       icon: Icons.chat_bubble_rounded,
                       color: Colors.green,
                       onTap: () async {
