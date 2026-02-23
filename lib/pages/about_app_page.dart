@@ -33,7 +33,7 @@ class AboutAppPage extends StatelessWidget {
               const SizedBox(height: 24),
               
               const Text(
-                "KLASTAT",
+                "PLAOSAN",
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const Text(

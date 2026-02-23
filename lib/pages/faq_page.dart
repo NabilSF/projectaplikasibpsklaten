@@ -16,8 +16,8 @@ class FaqPage extends StatelessWidget {
         padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 50),
         children: const [
           FaqTile(
-            question: "Apa itu aplikasi KLASTAT?",
-            answer: "KLASTAT adalah aplikasi mobile resmi dari BPS Kabupaten Klaten yang menyediakan data statistik strategis, publikasi, dan berita terbaru seputar Kabupaten Klaten.",
+            question: "Apa itu aplikasi PLAOSAN?",
+            answer: "PLAOSAN adalah aplikasi mobile resmi dari BPS Kabupaten Klaten yang menyediakan data statistik strategis, publikasi, dan berita terbaru seputar Kabupaten Klaten.",
           ),
           FaqTile(
             question: "Apakah data di aplikasi ini gratis?",
@@ -38,7 +38,7 @@ class FaqPage extends StatelessWidget {
           // Tambahan FAQ agar list terlihat lebih panjang sedikit
           FaqTile(
             question: "Apakah aplikasi ini membutuhkan koneksi internet?",
-            answer: "Ya, aplikasi KLASTAT membutuhkan koneksi internet untuk mengambil data terbaru langsung dari server BPS.",
+            answer: "Ya, aplikasi PLAOSAN membutuhkan koneksi internet untuk mengambil data terbaru langsung dari server BPS.",
           ),
         ],
       ),

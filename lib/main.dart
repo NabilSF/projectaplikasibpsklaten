@@ -84,7 +84,7 @@ class MyApp extends StatelessWidget {
       builder: (_, mode, __) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          title: 'KLASTAT',
+          title: 'PLAOSAN',
           theme: ThemeData(
             useMaterial3: true,
             brightness: Brightness.light,

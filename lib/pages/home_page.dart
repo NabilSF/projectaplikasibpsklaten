@@ -165,20 +165,34 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                         children: [
                           Row(
                             children: [
-                              // Placeholder Logo Aplikasi
+                              // --- LOGO PLAOSAN (GANTI ICON LAMA) ---
                               Container(
-                                padding: const EdgeInsets.all(8),
+                                padding: const EdgeInsets.all(4), 
+                                width: 48, // Ukuran Kotak Putih
+                                height: 48,
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                child: const Icon(Icons.bar_chart_rounded, color: Color(0xFF111439), size: 24),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.asset(
+                                    "assets/app_icon.jpeg", // Pastikan file ini ada
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      // Jika gambar gagal dimuat, tampilkan icon backup
+                                      return const Icon(Icons.bar_chart_rounded, color: Color(0xFF111439));
+                                    },
+                                  ),
+                                ),
                               ),
+                              
                               const SizedBox(width: 12),
+                              
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text("KLASTAT", style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                                  const Text("PLAOSAN", style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.w900, letterSpacing: 1)),
                                   Text("BPS Kab. Klaten", style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.8))),
                                 ],
                               ),
@@ -418,7 +432,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       width: double.infinity,
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [fixedBlue, fixedGradient], // Pakai warna tetap
+          colors: [fixedBlue, fixedGradient], 
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -454,7 +468,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: const Text(
-                          "SKD",
+                          "SKD 2025",
                           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10),
                         ),
                       ),
@@ -554,7 +568,6 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     return Container(margin: const EdgeInsets.only(bottom: 12), decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: BorderRadius.circular(12), border: Border.all(color: theme.dividerColor.withOpacity(0.5))), child: ListTile(contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4), title: Text(item.title, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)), subtitle: Padding(padding: const EdgeInsets.only(top: 6), child: Text(item.rlDate, style: TextStyle(fontSize: 11, color: theme.textTheme.bodySmall?.color))), trailing: Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Colors.grey[400]), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => BeritaDetailPage(newsId: item.newsId)))));
   }
 
-  // BUILDER BRS dengan GAMBAR COVER DARI API
   Widget _buildPressReleaseItem(BuildContext context, BpsPressRelease item) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
